@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
-typedef enum {WRONG_WORD, CORRECT_WORD, REPEATED_LETTER, UNREPEATED_LETTER, LETTER_FOUND, 
-LETTER_NOT_FOUND, SCREEN_SIZE=40} config;
+typedef enum {WRONG_WORD, CORRECT_WORD, REPEATED_LETTER, UNREPEATED_LETTER, 
+LETTER_FOUND, LETTER_NOT_FOUND, SCREEN_SIZE=40} config;
 
 void initialize(char word[], int size);
 void execute();
@@ -13,6 +14,7 @@ int repeated_letter(char word[], char letter);
 void print_erro(char erro[], int err);
 void clear_screen();
 void screen(char word[], int attempts);
+int choose_word(char list_word);
 
 int main()
 {
@@ -63,6 +65,11 @@ void print_erro(char erro[], int err)
         printf(" %s\n", erro);
 }
 
+int choose_word(char list_word)
+{
+    return rand() % 21;
+}
+
 void initialie(char word[], int size)
 {
     int i;
@@ -78,18 +85,28 @@ void screen(char word[], int attempts)
         "|                                      |\n"
         "========================================\n");
     show_letters(word);
-    printf("\n\n TRY [%d/5] ", attempts);
+    printf("\n\n TRY [%d/10] ", attempts);
 }
 
 void execute()
 {
-    char secret_word[] = {"recursividade"};
+    char list_word[20][15] = {
+        {"algoritmo"}, {"internet "}, {"digital"}, {"holograma"}, 
+        {"camelo"}, {"formiga"}, {"chinchila"}, {"coelho"}, 
+        {"ervilha"}, {"alcachofra"}, {"espinafre"}, {"cogumelo"}, 
+        {"submarino"}, {"triciclo"}, {"planador"}, {"caminhonete"}, 
+        {"faculdade"}, {"intelecto"}, {"instrutor"}, {"pesquisa"}
+    };
+    srand(time(NULL));
+    int chosen_word = rand() % 21;
+    char secret_word[15];
+    strcpy(secret_word, list_word[chosen_word]);
 	char word[20];
 	char letras_escolhidas[26] = {0};
-	char game[][41] = {"--------------  YOU WIN  ---------------", "--------------  YOU LOSE  --------------", "letra repetida"};
+	char game[][41] = {"--------------  YOU LOSE  --------------", "--------------  YOU WIN  ---------------", "letra repetida"};
 	char erros[][20] = {{"erro"}, {" "}};
 	char letter;
-	int attempts = 5, ind_letter = 0, result_game=WRONG_WORD;
+	int attempts = 10, ind_letter = 0, result_game=WRONG_WORD;
 	config conf;
 
 	initialie(word, strlen(secret_word));
@@ -99,6 +116,7 @@ void execute()
 	    do
 	    {
     	    screen(word, attempts);
+            printf("%s\n", list_word[chosen_word]);
     	    scanf(" %c", &letter);
     	    conf = repeated_letter(letras_escolhidas,  letter);
 	        print_erro(erros[1], conf);
@@ -117,7 +135,7 @@ void execute()
 	        break;
 	    }
 	}
-	if (result_game == CORRECT_WORD)
+	if (result_game != CORRECT_WORD)
 	{
 	    screen(secret_word, attempts);
 	    printf("\n%s\n", game[result_game]);

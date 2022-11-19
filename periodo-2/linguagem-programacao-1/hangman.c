@@ -39,7 +39,8 @@ int found_letter(char secret_word[], char word[], char letter)
 
 void show_letters(char word[])
 {
-    int i, size = strlen(word), center_text;
+    int i, size, center_text;
+    size = strlen(word);
     center_text = (SCREEN_SIZE - 2 * size) / 2;
 
     printf("\033[2;%dH", center_text);
@@ -70,11 +71,12 @@ int choose_word(char list_word)
     return rand() % 21;
 }
 
-void initialie(char word[], int size)
+void initialize(char word[], int size)
 {
     int i;
     for (i = 0; i < size; i++)
         word[i] = '_';
+    word[i] = '\0';
 }
 
 void screen(char word[], int attempts)
@@ -85,7 +87,7 @@ void screen(char word[], int attempts)
         "|                                      |\n"
         "========================================\n");
     show_letters(word);
-    printf("\n\n TRY [%d/10] ", attempts);
+    printf("\n\n TRY [%02d/10] ", attempts);
 }
 
 void execute()
@@ -98,46 +100,38 @@ void execute()
         {"faculdade"}, {"intelecto"}, {"instrutor"}, {"pesquisa"}
     };
     srand(time(NULL));
-    int chosen_word = rand() % 21;
-    char secret_word[15];
-    strcpy(secret_word, list_word[chosen_word]);
-	char word[20];
-	char letras_escolhidas[26] = {0};
-	char game[][41] = {"--------------  YOU LOSE  --------------", "--------------  YOU WIN  ---------------", "letra repetida"};
+    char secret_word[15], word[15], letter;
+	char typed_letters[26] = {0};
+	char game[][41] = {
+        "--------------  YOU LOSE ---------------", 
+        "--------------  YOU WIN ----------------", 
+        "letra repetida"};
 	char erros[][20] = {{"erro"}, {" "}};
-	char letter;
-	int attempts = 10, ind_letter = 0, result_game=WRONG_WORD;
+	int attempts = 10, ind_letter = 0, result_game=WRONG_WORD, chosen_word;
 	config conf;
 
-	initialie(word, strlen(secret_word));
+    chosen_word = rand() % 21;
+    strcpy(secret_word, list_word[chosen_word]);
+	initialize(word, strlen(secret_word));
 
-	while (attempts > 0)
+	while (attempts > 0 && result_game != CORRECT_WORD)
 	{
 	    do
 	    {
     	    screen(word, attempts);
-            printf("%s\n", list_word[chosen_word]);
     	    scanf(" %c", &letter);
-    	    conf = repeated_letter(letras_escolhidas,  letter);
+    	    conf = repeated_letter(typed_letters,  letter);
 	        print_erro(erros[1], conf);
 	    }while (conf == REPEATED_LETTER);
 
-	    letras_escolhidas[ind_letter] = letter;
+	    typed_letters[ind_letter] = letter;
 	    ind_letter++;
 
 	    if (found_letter (secret_word, word, letter) == LETTER_NOT_FOUND)
 	        attempts -= 1;
 	    if (strcmp (secret_word, word) == 0)
-	    {
 	        result_game = CORRECT_WORD;
-            screen(secret_word, attempts);
-	        printf("\n%s\n", game[result_game]);
-	        break;
-	    }
 	}
-	if (result_game != CORRECT_WORD)
-	{
-	    screen(secret_word, attempts);
-	    printf("\n%s\n", game[result_game]);
-	}
+    screen(secret_word, attempts);
+    printf("\n%s\n", game[result_game]);
 }

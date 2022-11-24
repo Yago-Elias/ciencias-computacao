@@ -5,7 +5,7 @@
 #include <time.h>
 
 typedef enum {WRONG_WORD, CORRECT_WORD, REPEATED_LETTER, UNREPEATED_LETTER, 
-LETTER_FOUND, LETTER_NOT_FOUND, ERROR_OPEN_FILE, WORD_LENGTH=15, SCREEN_SIZE=40} config;
+LETTER_FOUND, LETTER_NOT_FOUND, ERROR_OPEN_FILE, WORD_LENGTH=12, SCREEN_SIZE=40} config;
 
 void initialize(char word[], int size);
 void execute();
@@ -47,7 +47,7 @@ void show_letters(char word[])
 
     printf("\033[2;%dH", center_text);
     for (i = 0; i < size; i++)
-        printf("%2c", word[i]);
+        printf("\033[93m%2c", word[i]);
     //printf("\033[m");
 }
 
@@ -100,7 +100,7 @@ void screen(char word[], int attempts)
 void choose_word(char secret_word[])
 {
     int word_position;
-    char select_word[15];
+    char select_word[12];
 	FILE* file = fopen("list_words.dat","rb");
 	if (file == NULL)
 	{
@@ -109,7 +109,7 @@ void choose_word(char secret_word[])
 	}
 
     word_position = rand() % 21;
-    fseek(file, sizeof(char) * word_position, SEEK_SET);
+    fseek(file, WORD_LENGTH * word_position, SEEK_SET);
     fread(&select_word, sizeof(char), WORD_LENGTH, file);
     strcpy(secret_word, select_word);
 	fclose(file);
@@ -135,7 +135,6 @@ void execute()
 	    do
 	    {
     	    screen(word, attempts);
-            printf("%s\n", secret_word);
     	    scanf(" %c", &letter);
     	    error_code = repeated_letter(typed_letters,  letter);
 	        print_error(error, error_code);

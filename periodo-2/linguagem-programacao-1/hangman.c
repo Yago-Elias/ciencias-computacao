@@ -30,11 +30,11 @@ int main()
 
 int found_letter(char secret_word[], char word[], char letter)
 {
-    int i, size = strlen(secret_word);
+    int i, length = strlen(secret_word);
     letter = toupper(letter);
     config found = LETTER_NOT_FOUND;
 
-    for (i = 0; i < size; i++)
+    for (i = 0; i < length; i++)
     {
         if (secret_word[i] == letter)
         {
@@ -47,12 +47,12 @@ int found_letter(char secret_word[], char word[], char letter)
 
 void show_letters(char word[])
 {
-    int i, size, center_text;
-    size = strlen(word);
-    center_text = (SCREEN_SIZE - 2 * size) / 2;
+    int i, length, center_text;
+    length = strlen(word);
+    center_text = (SCREEN_SIZE - 2 * length) / 2;
 
     printf("\033[2;%dH ", center_text);
-    for (i = 0; i < size; i++)
+    for (i = 0; i < length; i++)
         printf("%s%2c", YELLOW, word[i]);
     printf("%s", CLR_COLOR);
 }
@@ -60,9 +60,7 @@ void show_letters(char word[])
 int check_input(char typed_letters[], char letter)
 {
     int i = 0;
-    if (ispunct(letter) != 0)
-        return NOT_LETTER;
-    else if (isdigit(letter) == 0)
+    if (isalpha(letter) != 0)
     {
         letter = toupper(letter);
         while (typed_letters[i] != '\0')
@@ -71,25 +69,25 @@ int check_input(char typed_letters[], char letter)
                 return REPEATED_LETTER;
             ++i;
         }
+    return UNREPEATED_LETTER;
     }
     else
         return NOT_LETTER;
-    return UNREPEATED_LETTER;
 }
 
-void init(char word[], int size)
+void init(char word[], int length)
 {
     int i;
-    for (i = 0; i < size; i++)
+    for (i = 0; i < length; i++)
         word[i] = '_';
     word[i] = '\0';
 }
 
 void screen(char word[], int attempts, char game[][280], int error_code)
 {
-    int size, center_text;
-    size = strlen(game[error_code]);
-    center_text = (SCREEN_SIZE - size) / 2;
+    int length, center_text;
+    length = strlen(game[error_code]);
+    center_text = (SCREEN_SIZE - length) / 2;
 
     printf("\033[1J \033[1;1H");
     printf(
@@ -127,8 +125,8 @@ void execute()
     char letter;
     char secret_word[15], word[15], typed_letters[22] = {"\0"};
 	char game[][280] = {
-        "═══════════════╡ YOU LOSE ╞═══════════════", 
-        "═══════════════╡ YOU WIN ╞════════════════", 
+        "YOU LOSE", 
+        "YOU  WIN", 
         "REPEATED LETTER", 
         "NOT IS LETTER", 
         "TYPE ONLY ONE LETTER"
@@ -151,11 +149,11 @@ void execute()
 	    typed_letters[ind_letter] = toupper(letter);
 	    ind_letter++;
 
-        if (strcmp(secret_word, word) == 0)
-	        result_game = CORRECT_WORD;
-	    else if (found_letter(secret_word, word, letter) == LETTER_NOT_FOUND)
+	    if (found_letter(secret_word, word, letter) == LETTER_NOT_FOUND)
 	        attempts -= 1;
+        else if (strcmp(secret_word, word) == 0)
+	        result_game = CORRECT_WORD;
 	}
     screen(secret_word, attempts, game, error_code);
-    printf("\n%s%s%s\n", COLOR(result_game), game[result_game], CLR_COLOR);
+    printf("\n%s═══════════════╡ %8s ╞═══════════════%s\n", COLOR(result_game), game[result_game], CLR_COLOR);
 }

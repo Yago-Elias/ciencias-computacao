@@ -3,13 +3,15 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-#define COLOR(result) (result == 1 ? BRIGHT_GREEN : BRIGHT_RED)
 
+#define TRUE 1
+#define FALSE 0
 #define CLR_COLOR "\033[m"
 #define BLUE "\033[1;94m"
 #define BRIGHT_RED "\033[1;91m"
 #define BRIGHT_GREEN "\033[1;92m"
 #define YELLOW "\033[93m"
+#define COLOR(result) (result == 1 ? BRIGHT_GREEN : BRIGHT_RED)
 
 typedef enum {WRONG_WORD, CORRECT_WORD, REPEATED_LETTER, NOT_LETTER, UNREPEATED_LETTER, 
 LETTER_FOUND, IS_LETTER, LETTER_NOT_FOUND, ERROR_OPEN_FILE, WORD_LENGTH=12, SCREEN_SIZE=40} config;
@@ -18,9 +20,11 @@ int found_letter(char secret_word[], char word[], char letter);
 void show_letters(char word[]);
 int check_input(char typed_letters[], char letter);
 void init(char word[], int size);
-void screen(char word[], int attempts, char game[][280], int error_code);
+void screen(char word[], char game[][280], int error_code);
 void choose_word(char select_word[]);
 void execute();
+
+int attempts = 10, run_game=TRUE, result_game=WRONG_WORD;
 
 int main()
 {
@@ -83,7 +87,7 @@ void init(char word[], int length)
     word[i] = '\0';
 }
 
-void screen(char word[], int attempts, char game[][280], int error_code)
+void screen(char word[], char game[][280], int error_code)
 {
     int length, center_text;
     length = strlen(game[error_code]);
@@ -99,6 +103,8 @@ void screen(char word[], int attempts, char game[][280], int error_code)
     if (error_code == REPEATED_LETTER || error_code == NOT_LETTER)
         printf("\033[1;%dH%s╡ %s %s╞", center_text, BLUE, game[error_code], BLUE);
     printf("\033[4;2H%s%s TRY [%02d/10]%s ", CLR_COLOR, YELLOW, attempts, CLR_COLOR);
+    if (run_game != TRUE)
+        printf("\n%s═══════════════╡ %8s ╞═══════════════%s\n", COLOR(result_game), game[result_game], CLR_COLOR);
 }
 
 void choose_word(char secret_word[])
@@ -131,7 +137,7 @@ void execute()
         "NOT IS LETTER", 
         "TYPE ONLY ONE LETTER"
     };
-	int attempts = 10, ind_letter = 0, result_game=WRONG_WORD, error_code;
+	int ind_letter = 0, error_code;
 
     choose_word(secret_word);
 	init(word, strlen(secret_word));
@@ -140,7 +146,7 @@ void execute()
 	{
 	    do
 	    {
-    	    screen(word, attempts, game, error_code);
+    	    screen(word, game, error_code);
     	    scanf(" %c", &letter);
     	    error_code = check_input(typed_letters,  letter);
 	    }while (error_code == REPEATED_LETTER || error_code == NOT_LETTER);
@@ -154,6 +160,6 @@ void execute()
         else if (strcmp(secret_word, word) == 0)
 	        result_game = CORRECT_WORD;
 	}
-    screen(secret_word, attempts, game, error_code);
-    printf("\n%s═══════════════╡ %8s ╞═══════════════%s\n", COLOR(result_game), game[result_game], CLR_COLOR);
+    run_game = FALSE;
+    screen(secret_word, game, error_code);
 }

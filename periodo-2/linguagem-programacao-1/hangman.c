@@ -129,14 +129,17 @@ void screen(char word[])
     printf(
         "%s╒════════════════════════════════════════╕\n"
         "╎                                        ╎\n"
-        "╘════════════════════════════════════════╛%s\n", 
-        run_game == TRUE ? BRIGHT_BLUE : COLOR(result_game), RST_COLOR);
-    show_letters(word, 2);
+        "╎                                        ╎\n"
+        "╎                                        ╎\n"
+        "╞═[%02d/10]════════════════════════════════╛\n╎\n"
+        "╘══╡%s\n", 
+        run_game == TRUE ? BRIGHT_BLUE : COLOR(result_game), attempts, RST_COLOR);
+    show_letters(word, 3);
+    show_letters(typed_letters, 6);
     print_error();
-    show_letters(typed_letters, 4);
-    printf("\033[5;2H%s%s TRY [%02d/10]%s ", RST_COLOR, YELLOW, attempts, RST_COLOR);
+    printf("\033[7;5H%s", BRIGHT_GREEN);
     if (run_game != TRUE)
-        printf("\n%s═══════════════╡ %8s ╞═══════════════%s\n", COLOR(result_game), game[result_game], RST_COLOR);
+        printf("\033[1;16H%s╡ %8s ╞%s\033[8;1H", COLOR(result_game), game[result_game], RST_COLOR);
 }
 
 void choose_word(char secret_word[])
@@ -154,6 +157,7 @@ void choose_word(char secret_word[])
         strcpy(secret_word, select_word);
         fclose(file);
     }
+    error();
 }
 
 void execute()
@@ -175,7 +179,7 @@ void execute()
 	    }while (err);
 
 	    found_letter(secret_word, word);
-        if (strcmp(secret_word, word) == 0)
+        if (!strcmp(secret_word, word) == CORRECT_WORD)
 	        result_game = CORRECT_WORD;
         run_game = (attempts > 0 && result_game != CORRECT_WORD);
 	}

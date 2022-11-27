@@ -16,14 +16,31 @@
 typedef enum {WRONG_WORD, CORRECT_WORD, REPEATED_LETTER, NOT_LETTER, IS_STRING, UNREPEATED_LETTER, 
 LETTER_FOUND, LETTER_NOT_FOUND, ERROR_OPEN_FILE, WORD_LENGTH=12, SCREEN_SIZE=40} config;
 
+//procura a letrar na palavra secreta
 void found_letter(char secret_word[], char word[]);
+
+//trata os erros do programa
 void error();
+
+//mostra as letras de uma string na linha informada
 void show_letters(char word[], int line);
+
+//recebe a entrado do usuário
 void user_input();
-void init(char word[], int size);
+
+//preenche a palavra a ser descoberta de aordo com o tamanho da palavra secreta
+void init(char word[], int length);
+
+//mostra o erro ocorrido
 void print_error();
-void screen(char word[]);
+
+//imprime a interface do jogo
+void interface(char word[]);
+
+//seleciona uma palavra aleatoriamente de um arquivo
 void choose_word(char select_word[]);
+
+//executa o jogo
 void execute();
 
 int attempts = 10, error_code, run_game=TRUE, result_game=WRONG_WORD;
@@ -123,7 +140,7 @@ void print_error()
     }
 }
 
-void screen(char word[])
+void interface(char word[])
 {
     printf("\033[1J \033[1;1H");
     printf(
@@ -172,7 +189,7 @@ void execute()
 	{
 	    do
 	    {
-    	    screen(word);
+    	    interface(word);
     	    user_input();
             error();
             err = (error_code == REPEATED_LETTER || error_code == NOT_LETTER || error_code == IS_STRING);
@@ -183,5 +200,5 @@ void execute()
 	        result_game = CORRECT_WORD;
         run_game = (attempts > 0 && result_game != CORRECT_WORD);
 	}
-    screen(secret_word);
+    interface(secret_word);
 }

@@ -6,8 +6,8 @@
 
 #define TRUE 1
 #define FALSE 0
-#define CLR_COLOR "\033[m"
-#define BLUE "\033[1;94m"
+#define RST_COLOR "\033[m"
+#define BRIGHT_BLUE "\033[1;94m"
 #define BRIGHT_RED "\033[1;91m"
 #define BRIGHT_GREEN "\033[1;92m"
 #define YELLOW "\033[93m"
@@ -26,7 +26,7 @@ void screen(char word[]);
 void choose_word(char select_word[]);
 void execute();
 
-int err, attempts = 10, error_code, run_game=TRUE, result_game=WRONG_WORD;
+int attempts = 10, error_code, run_game=TRUE, result_game=WRONG_WORD;
 char letter, str_input[20], typed_letters[22] = {"\0"};
 const char game[][50] = {"YOU LOSE", "YOU  WIN", "REPEATED LETTER", "NOT IS LETTER", "TYPE ONLY ONE LETTER"};
 
@@ -38,8 +38,8 @@ int main()
 
 void found_letter(char secret_word[], char word[])
 {
-    int i, length = strlen(secret_word);
-    config found = LETTER_NOT_FOUND;
+    int i, found, length = strlen(secret_word);
+    found = LETTER_NOT_FOUND;
 
     for (i = 0; i < length; i++)
     {
@@ -86,7 +86,7 @@ void show_letters(char word[], int line)
     printf("\033[%d;%dH ", line, center_text);
     for (i = 0; i < length; i++)
         printf("%s%2c", YELLOW, word[i]);
-    printf("%s", CLR_COLOR);
+    printf("%s", RST_COLOR);
 }
 
 void user_input()
@@ -113,13 +113,13 @@ void print_error()
         error = error_code;
     else if (error_code == ERROR_OPEN_FILE)
     {
-        printf("%s<ERROR OPENING FILE>%s\n", BRIGHT_RED, CLR_COLOR);
+        printf("%s<ERROR OPENING FILE>%s\n", BRIGHT_RED, RST_COLOR);
         exit(ERROR_OPEN_FILE);
     }
     if (error != FALSE)
     {
         center_text = (SCREEN_SIZE - strlen(game[error])) / 2;
-        printf("\033[1;%dH%s╡ %s %s╞", center_text, BLUE, game[error], BLUE);
+        printf("\033[1;%dH%s╡ %s %s╞", center_text, BRIGHT_BLUE, game[error], BRIGHT_BLUE);
     }
 }
 
@@ -130,18 +130,18 @@ void screen(char word[])
         "%s╒════════════════════════════════════════╕\n"
         "╎                                        ╎\n"
         "╘════════════════════════════════════════╛%s\n", 
-        run_game == TRUE ? BLUE : COLOR(result_game), CLR_COLOR);
+        run_game == TRUE ? BRIGHT_BLUE : COLOR(result_game), RST_COLOR);
     show_letters(word, 2);
     print_error();
     show_letters(typed_letters, 4);
-    printf("\033[5;2H%s%s TRY [%02d/10]%s ", CLR_COLOR, YELLOW, attempts, CLR_COLOR);
+    printf("\033[5;2H%s%s TRY [%02d/10]%s ", RST_COLOR, YELLOW, attempts, RST_COLOR);
     if (run_game != TRUE)
-        printf("\n%s═══════════════╡ %8s ╞═══════════════%s\n", COLOR(result_game), game[result_game], CLR_COLOR);
+        printf("\n%s═══════════════╡ %8s ╞═══════════════%s\n", COLOR(result_game), game[result_game], RST_COLOR);
 }
 
 void choose_word(char secret_word[])
 {
-    int word_position;
+    int word_position, err;
     char select_word[12];
 	FILE* file = fopen("list_words.dat","rb");
 	if (file == NULL)
@@ -159,6 +159,7 @@ void choose_word(char secret_word[])
 void execute()
 {
     srand(time(NULL));
+    int err;
     char secret_word[15], word[15];
     choose_word(secret_word);
 	init(word, strlen(secret_word));

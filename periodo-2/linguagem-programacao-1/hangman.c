@@ -14,7 +14,7 @@
 #define COLOR(result) (result == FALSE ? BRIGHT_RED : BRIGHT_GREEN)
 
 typedef enum {WRONG_WORD, CORRECT_WORD, REPEATED_LETTER, NOT_LETTER, IS_STRING, UNREPEATED_LETTER, 
-LETTER_FOUND, LETTER_NOT_FOUND, ERROR_OPEN_FILE, WORD_LENGTH=12, SCREEN_SIZE=40} config;
+LETTER_FOUND, LETTER_NOT_FOUND, ERROR_OPEN_FILE, WORD_LENGTH=14, SCREEN_SIZE=40} config;
 
 //procura a letrar na palavra secreta
 void found_letter(char secret_word[], char word[]);
@@ -148,7 +148,7 @@ void interface(char word[])
         "╎                                        ╎\n"
         "╎                                        ╎\n"
         "╎                                        ╎\n"
-        "╞═[%02d/10]════════════════════════════════╛\n╎\n"
+        "╞═══════════════[ %02d/10 ]════════════════╛\n╎\n"
         "╘══╡%s\n", 
         run_game == TRUE ? BRIGHT_BLUE : COLOR(result_game), attempts, RST_COLOR);
     show_letters(word, 3);
@@ -162,19 +162,18 @@ void interface(char word[])
 void choose_word(char secret_word[])
 {
     int word_position, err;
-    char select_word[12];
+    char select_word[15];
 	FILE* file = fopen("list_words.dat","rb");
 	if (file == NULL)
 		error_code = ERROR_OPEN_FILE;
     else
     {
-        word_position = rand() % 21;
+        word_position = rand() % 51;
         fseek(file, WORD_LENGTH * word_position, SEEK_SET);
         fread(&select_word, sizeof(char), WORD_LENGTH, file);
         strcpy(secret_word, select_word);
         fclose(file);
     }
-    error();
 }
 
 void execute()

@@ -2,5 +2,6 @@
     "workbench.activityBar.iconClickBehavior": "toggle",
     "workbench.colorTheme": "Default Dark+",
     "workbench.preferredHighContrastColorTheme": "Default Dark+",
-    "workbench.sideBar.location": "right"
+    "workbench.sideBar.location": "right",
+    "C_Cpp.errorSquiggles": "disabled"
 }

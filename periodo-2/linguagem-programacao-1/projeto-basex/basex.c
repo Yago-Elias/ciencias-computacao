@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-enum error {MISSING_ARGUMENTS=1, EXCEEDED_ARGUMENTS, INVALID_PARAMETER, INVALID_INPUT, 
-INVALID_BASE};
+enum error {ALL=20, MISSING_ARGUMENTS, EXCEEDED_ARGUMENTS, 
+INVALID_PARAMETER, INVALID_INPUT, INVALID_BASE};
 enum base {BIN=2, OCT=8, DEC=10, HEX=16};
 
 void error(int argc, char const *argv[]);
@@ -13,9 +13,16 @@ void execute(int argc, char const *argv[]);
 
 int code_error=0;
 char number_base[50];
-char message_error[][50] = {
-    "Argumentos ausentes", "Limite de argumento ultrapassado", "Parâmetro inválido", 
-    "Base inválida"
+char message_error[][40] = {
+    "Argumentos ausentes", "Limite de argumento ultrapassado", "Base numérica de converção inválida", 
+    "Base numérica ou número inválido"
+};
+char help[][80] = {
+    "./basex --help  |  ./basex [number] [base] [parameter]", "PARAMETER:", 
+    "--b\t\t\tconversão para a base binária", "--o\t\t\tconversão para a base octal", 
+    "--d\t\t\tconversão para a base decimal", "--h\t\t\tconversão para a base hexadecimal", 
+    "--all\t\t\tconversão para a base binária, octal, decimal e hexadecimal", 
+    "--help\t\t\texibe as bases de conversão"
 };
 
 int main(int argc, char const *argv[])
@@ -30,6 +37,7 @@ int base(const char base[])
     else if (!strcmp(base, "--o")) return OCT;
     else if (!strcmp(base, "--d")) return DEC;
     else if (!strcmp(base, "--h")) return HEX;
+    else if (!strcmp(base, "--all")) return ALL;
     return 0;
 }
 
@@ -42,7 +50,7 @@ int check_base(const char number[], int base)
         rule_bin = (number[i] < '0' || number[i] > '1');
         rule_oct = (number[i] < '0' || number[i] > '7');
         rule_dec = (number[i] < '0' || number[i] > '9');
-        rule_hex = (rule_dec || (number[i] < 'a' || number[i] > 'f'));
+        rule_hex = (rule_dec && (number[i] < 'a' || number[i] > 'f'));
         if (base == BIN && rule_bin) return 1;
         if (base == OCT && rule_oct) return 1;
         if (base == DEC && rule_dec) return 1;
@@ -53,18 +61,23 @@ int check_base(const char number[], int base)
 
 void error(int argc, const char *argv[])
 {
-    int err, bs=1, parameter_invalid=0;
+    int err, parameter_base=1, parameter_invalid=1, base_input=1;
 
     if (argc >= 3)
     {
-        bs = base(argv[2]);
-        parameter_invalid = check_base(argv[1], bs);
+        base_input = base(argv[2]);
+        for (int i = 3; i < 6; i++)
+            if (argv[i] != NULL && parameter_invalid != 0)
+                parameter_invalid = base(argv[i]);
+            else break;
+        parameter_base = check_base(argv[1], base_input);
     }
 
     if (argc == 1 || argc == 3) code_error = MISSING_ARGUMENTS;
     else if (argc > 6) code_error = EXCEEDED_ARGUMENTS;
-    else if (parameter_invalid) code_error = INVALID_INPUT;
-    else if (bs == 0) code_error = INVALID_BASE;
+    else if (parameter_invalid == 0) code_error = INVALID_PARAMETER;
+    else if (parameter_base) code_error = INVALID_INPUT;
+    else if (base_input == 0) code_error = INVALID_BASE;
     
     switch (code_error)
     {
@@ -118,7 +131,7 @@ int to_decimal(const char number[], int base)
 
 void to_base(int number, int base)
 {
-    int i = 0, rest=number;
+    int i = 0, index, rest;
     char number_c[40] = {'\0'};
     char aux = 48;
     while (number >=  base)
@@ -130,43 +143,60 @@ void to_base(int number, int base)
         aux = 48;
         i++;
     }
+    rest = number;
     if (base == HEX && rest > 9) aux = 87;
     number_c[i] = number + aux;
     
-    i = strlen(number_c) - 1;
-    number_base[i+1] = '\0';
-    for (;i >= 0; i--)
-        number_base[i] = number_c[i];
+    index = strlen(number_c) - 1;
+    i = index;
+    for (; i >= 0; i--)
+        number_base[i] = number_c[index-i];
+    number_base[index+1] = '\0';
 }
 //      0       1      2     3     4     5
 // [./basex] [23456] [--d] [--b] [--h] [--0]
 void execute(int argc, char const *argv[])
 {
     error(argc, argv);
-    int i, all=0, bs=0, base_input, number_input;
+    int i, bs=0, base_input, number_input;
+    int bases[] = {BIN, OCT, DEC, HEX};
     
     if (argc == 2)
     {
         if (!strcmp(argv[1], "--help"))
-            printf("help\n");
-        else if (!strcmp(argv[1], "--all")) all = 1;
+            for (i = 0; i < 8; i++)
+                printf("%s\n", help[i]);
     }
-    else if (argc > 2)
+    else if (argc > 3)
     {
         base_input = base(argv[2]);
         if (bs == DEC) number_input = atoi(argv[1]);
         else number_input = to_decimal(argv[1], base_input);
 
-        for (i = 3; i < 6; i++)
+        if (base(argv[3]) == ALL)
         {
-            if (argv[i] != NULL)
+            for (i = 0; i < 4; i++)
             {
-                bs = base(argv[i]);
-                to_base(number_input, bs);
-                printf("%d(%d)  ", number_input, base_input);
-                printf("%s(%d)\n", number_base, bs);
+                bs = bases[i];
+                if (base_input != bs)
+                {
+                    to_base(number_input, bs);
+                    printf("%s(%d)  %s(%d)\n", argv[1], base_input, number_base, bs);
+                }
             }
-            else break;
+        }
+        else
+        {
+            for (i = 3; i < 6; i++)
+            {
+                if (argv[i] != NULL)
+                {
+                    bs = base(argv[i]);
+                    to_base(number_input, bs);
+                    printf("%s(%d)  %s(%d)\n", argv[1], base_input, number_base, bs);
+                }
+                else break;
+            }
         }
     }
 }

@@ -1,29 +1,33 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#define INFO_VERSION "1.2.0"
 
-enum error {ALL=20, MISSING_ARGUMENTS, EXCEEDED_ARGUMENTS, 
-INVALID_PARAMETER, INVALID_INPUT, INVALID_BASE};
-enum base {BIN=2, OCT=8, DEC=10, HEX=16};
+enum error {MISSING_ARGUMENTS=1, EXCEEDED_ARGUMENTS, INVALID_PARAMETER, INVALID_INPUT, INVALID_BASE};
+enum parameter {ALL=20, HELP, VERSION, BIN=2, OCT=8, DEC=10, HEX=16};
 
 void error(int argc, char const *argv[]);
 int to_decimal(const char number[], int base);
 void to_base(int number, int base);
 void execute(int argc, char const *argv[]);
 
-int code_error=0;
-char number_base[50];
-char message_error[][40] = {
-    "Argumentos ausentes", "Limite de argumento ultrapassado", "Base numérica de converção inválida", 
-    "Base numérica ou número inválido"
+enum error code_error=0;
+char number_base[30];
+char message_error[][61] = {
+    "Parâmetro(s) ausente(s)\nMais detalhes: ./basex --help", "Limite de parâmetro ultrapassado", 
+    "Parâmetro de converção inválido", "Base numérica ou número inválido", 
+    "Parâmetro inválido ou ausente\nMais detalhes: ./basex --help"
 };
-char help[][80] = {
-    "./basex --help  |  ./basex [number] [base] [parameter]", "PARAMETER:", 
-    "--b\t\t\tconversão para a base binária", "--o\t\t\tconversão para a base octal", 
-    "--d\t\t\tconversão para a base decimal", "--h\t\t\tconversão para a base hexadecimal", 
-    "--all\t\t\tconversão para a base binária, octal, decimal e hexadecimal", 
-    "--help\t\t\texibe as bases de conversão"
+char help[][105] = {
+    "Usage:\n ./basex [options]\n ./basex [number] [base] [parameter]...", 
+    "BASE:", " --b, --o, --d, --h", "PARAMETER:",  " --b\t\tconversão para a base binária", 
+    " --o\t\tconversão para a base octal", " --d\t\tconversão para a base decimal", 
+    " --h\t\tconversão para a base hexadecimal", 
+    " --all\t\tconversão para a base binária, octal, decimal e hexadecimal,", 
+    "\t\texceto a base do próprio número", "OPTIONS:", " --help\t\tmostra esta ajuda", 
+    " --verion\tmostra a versão atual do software"
 };
+char version[] = {"basex 1.2.0\nCopyright (c) 2022 Yago Elias\nMIT License\nWritten by Yago Elias\n"};
 
 int main(int argc, char const *argv[])
 {
@@ -33,24 +37,31 @@ int main(int argc, char const *argv[])
 
 int base(const char base[])
 {
-    if (!strcmp(base, "--b")) return BIN;
-    else if (!strcmp(base, "--o")) return OCT;
-    else if (!strcmp(base, "--d")) return DEC;
-    else if (!strcmp(base, "--h")) return HEX;
-    else if (!strcmp(base, "--all")) return ALL;
+    if (base != NULL)
+    {
+        if (!strcmp(base, "--b")) return BIN;
+        else if (!strcmp(base, "--o")) return OCT;
+        else if (!strcmp(base, "--d")) return DEC;
+        else if (!strcmp(base, "--h")) return HEX;
+        else if (!strcmp(base, "--all")) return ALL;
+        else if (!strcmp(base, "--help")) return HELP;
+        else if (!strcmp(base, "--version")) return VERSION;
+    }
     return 0;
 }
 
 int check_base(const char number[], int base)
 {
-    int i, len = strlen(number);
-    for (i = 0; i < len; i++)
+    int i, length = strlen(number);
+    for (i = 0; i < length; i++)
     {
-        int rule_bin, rule_oct, rule_dec, rule_hex;
-        rule_bin = (number[i] < '0' || number[i] > '1');
-        rule_oct = (number[i] < '0' || number[i] > '7');
-        rule_dec = (number[i] < '0' || number[i] > '9');
-        rule_hex = (rule_dec && (number[i] < 'a' || number[i] > 'f'));
+        int character, rule_bin, rule_oct, rule_dec, rule_hex;
+        character = number[i];
+        if (character >= 'A' && character <= 'F') character += 32;
+        rule_bin = (character < '0' || character > '1');
+        rule_oct = (character < '0' || character > '7');
+        rule_dec = (character < '0' || character > '9');
+        rule_hex = (rule_dec && (character < 'a' || character > 'f'));
         if (base == BIN && rule_bin) return 1;
         if (base == OCT && rule_oct) return 1;
         if (base == DEC && rule_dec) return 1;
@@ -61,9 +72,11 @@ int check_base(const char number[], int base)
 
 void error(int argc, const char *argv[])
 {
-    int err, parameter_base=1, parameter_invalid=1, base_input=1;
-
-    if (argc >= 3)
+    int err, parameter_base=0, parameter_invalid=1, base_input=1;
+    
+    if (argc == 2)
+        parameter_invalid = (base(argv[1]) == HELP || base(argv[1]) == VERSION);
+    else if (argc >= 3)
     {
         base_input = base(argv[2]);
         for (int i = 3; i < 6; i++)
@@ -72,33 +85,25 @@ void error(int argc, const char *argv[])
             else break;
         parameter_base = check_base(argv[1], base_input);
     }
-
     if (argc == 1 || argc == 3) code_error = MISSING_ARGUMENTS;
+    else if (argc == 2 && parameter_invalid == 0) code_error = INVALID_PARAMETER;
     else if (argc > 6) code_error = EXCEEDED_ARGUMENTS;
-    else if (parameter_invalid == 0) code_error = INVALID_PARAMETER;
-    else if (parameter_base) code_error = INVALID_INPUT;
-    else if (base_input == 0) code_error = INVALID_BASE;
+    else if (base_input == 0 || parameter_base) code_error = INVALID_BASE;
+    else if (parameter_invalid == 0) code_error = INVALID_INPUT;
     
     switch (code_error)
     {
-    case MISSING_ARGUMENTS:
-        err =  0;
+    case MISSING_ARGUMENTS: err =  0;
         break;
-    case EXCEEDED_ARGUMENTS:
-        err =  1;
+    case EXCEEDED_ARGUMENTS: err =  1;
         break;
-    case INVALID_PARAMETER:
-        err =  2;
+    case INVALID_INPUT: err =  2;
         break;
-    case INVALID_INPUT:
-        err =  3;
+    case INVALID_BASE: err =  3;
         break;
-    case INVALID_BASE:
-        err =  3;
+    case INVALID_PARAMETER: err =  4;
         break;
-    default:
-        err = -1;
-        break;
+    default: err = -1;
     }
     if (err != -1)
     {
@@ -116,6 +121,8 @@ int to_decimal(const char number[], int base)
     for (i = 0; i < length; i++)
     {
         num = number[index] % '0';
+        if (num >= 'A' && num <= 'F')
+            num += 32;
         if (number[index] >= 'a' && number[index] <= 'f')
             num = number[index] % 87;
         while (k < i)
@@ -153,8 +160,7 @@ void to_base(int number, int base)
         number_base[i] = number_c[index-i];
     number_base[index+1] = '\0';
 }
-//      0       1      2     3     4     5
-// [./basex] [23456] [--d] [--b] [--h] [--0]
+
 void execute(int argc, char const *argv[])
 {
     error(argc, argv);
@@ -163,9 +169,12 @@ void execute(int argc, char const *argv[])
     
     if (argc == 2)
     {
-        if (!strcmp(argv[1], "--help"))
-            for (i = 0; i < 8; i++)
+        if (base(argv[1]) == HELP)
+        {
+            for (i = 0; i < 13; i++)
                 printf("%s\n", help[i]);
+        }
+        else if (base(argv[1]) == VERSION) printf("%s", version);
     }
     else if (argc > 3)
     {

@@ -14,7 +14,7 @@ enum Error code_error=0;
 char number_base[30];
 char message_error[][61] = {
     "Parâmetro(s) ausente(s)\nMais detalhes: ./basex --help", "Limite de parâmetro ultrapassado", 
-    "Parâmetro de converção inválido", "Base numérica ou número inválido", 
+    "./basex: parâmetro de converção inválido -", "Base numérica ou número inválido", 
     "Parâmetro inválido ou ausente\nMais detalhes: ./basex --help"
 };
 char help[][105] = {
@@ -89,7 +89,7 @@ void error(int argc, char *argv[])
     else if (argc == 3) code_error = INVALID_PARAMETER;
     else if (base_input == INVALID_INPUT) code_error = INVALID_INPUT;
     else if (parameter_base != 0) code_error = INVALID_INPUT;
-    else if (invalid_parameter == INVALID_INPUT) code_error = INVALID_PARAMETER;
+    else if (invalid_parameter == INVALID_INPUT) code_error = INVALID_BASE;
 
     switch (code_error)
     {
@@ -107,7 +107,10 @@ void error(int argc, char *argv[])
     }
     if (err != -1)
     {
-        printf("%s\n", message_error[err]);
+        if (err == 2)
+            printf("%s '%s'\n", message_error[err], argv[i-1]);
+        else
+            printf("%s\n", message_error[err]);
         exit(code_error);
     }
 }

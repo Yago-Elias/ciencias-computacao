@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
+#include <ctype.h>
 
 enum Error {MISSING_ARGUMENTS=1, EXCEEDED_ARGUMENTS, INVALID_PARAMETER, INVALID_INPUT, INVALID_BASE};
 enum Parameter {ALL=20, HELP, BIN=2, OCT=8, DEC=10, HEX=16};
@@ -11,23 +13,22 @@ void to_base(int number, int base);
 void execute(int argc, char *argv[]);
 
 enum Error code_error=0;
-char number_base[30];
+char number_out[30];
 char message_error[][61] = {
     "Parâmetro(s) ausente(s)\nMais detalhes: ./basex --help", "Limite de parâmetro ultrapassado", 
     "./basex: parâmetro de converção inválido -", "Base numérica ou número inválido", 
     "Parâmetro inválido ou ausente\nMais detalhes: ./basex --help"
 };
-char help[][105] = {
-    {"Usage:\n ./basex [options]\n ./basex [number] [base] [parameter]..."}, 
+char help[][71] = {
+    {"Usage:\n ./basex [OPTION]\n ./basex NUMBER [BASE] [CONVERSION BASE]..."}, 
     {"BASE:\n --b, --o, --d, --h"}, 
-    {"PARAMETER:\n --b\t\tconversão para a base binária"}, 
-    {" --o\t\tconversão para a base octal"}, 
-    {" --d\t\tconversão para a base decimal"}, 
-    {" --h\t\tconversão para a base hexadecimal"}, 
-    {" --all\t\tconversão para a base binária, octal, decimal e hexadecimal,"}, 
-    {"\t\texceto a base do próprio número"}, 
-    {"OPTIONS:\n --help\t\tmostra esta ajuda"}, 
-    {" --verion\tmostra a versão atual do software"}
+    {"CONVERSION BASE:\n --b\t\tconvertion to binary base"}, 
+    {" --o\t\tconvertion to octal base"}, 
+    {" --d\t\tconvertion to decimal base"}, 
+    {" --h\t\tconvertion to hexadecimal base"}, 
+    {" --all\t\tconvertion to binary, octal, decimal and hexadecimal base,"}, 
+    {"\t\texcept the base of the number itself"}, 
+    {"OPTION:\n --help\t\tshow this help"}
 };
 
 int main(int argc, char *argv[])
@@ -50,18 +51,17 @@ int base(char base[])
     return INVALID_INPUT;
 }
 
-int check_base(char number[], int base)
+int check_number(char number[], int base)
 {
-    int i, length = strlen(number);
+    int i, character, length = strlen(number);
+    int rule_bin, rule_oct, rule_dec, rule_hex;
     for (i = 0; i < length; i++)
     {
-        int character, rule_bin, rule_oct, rule_dec, rule_hex;
-        character = number[i];
-        if (character >= 'A' && character <= 'F') character += 32;
+        character = toupper(number[i]);
         rule_bin = (character < '0' || character > '1');
         rule_oct = (character < '0' || character > '7');
         rule_dec = (character < '0' || character > '9');
-        rule_hex = (rule_dec && (character < 'a' || character > 'f'));
+        rule_hex = (rule_dec && (character < 'A' || character > 'F'));
         if (base == BIN && rule_bin) return INVALID_INPUT;
         if (base == OCT && rule_oct) return INVALID_INPUT;
         if (base == DEC && rule_dec) return INVALID_INPUT;
@@ -77,7 +77,7 @@ void error(int argc, char *argv[])
     if (argc >= 3)
     {
         base_input = base(argv[2]);
-        parameter_base = check_base(argv[1], base_input);
+        parameter_base = check_number(argv[1], base_input);
         for (i = 3; i < argc; i++)
             if (argv[i] != NULL && invalid_parameter != INVALID_INPUT)
                 invalid_parameter = base(argv[i]);
@@ -108,7 +108,7 @@ void error(int argc, char *argv[])
     if (err != -1)
     {
         if (err == 2)
-            printf("%s '%s'\n", message_error[err], argv[i-1]);
+            printf("%s '%s'\n", message_error[err], argv[--i]);
         else
             printf("%s\n", message_error[err]);
         exit(code_error);
@@ -117,17 +117,16 @@ void error(int argc, char *argv[])
 
 int to_decimal(char number[], int base)
 {
-    int i, index, length, k=0, num=0, value=1, number_dec=0;
+    int i, index, length, character, k=0, num=0, value=1, number_dec=0;
     length = strlen(number);
     index = length - 1;
 
     for (i = 0; i < length; i++)
     {
-        num = number[index] % '0';
-        if (num >= 'A' && num <= 'F')
-            num += 32;
-        if (number[index] >= 'a' && number[index] <= 'f')
-            num = number[index] % 87;
+        character = toupper(number[index]);
+        num = character % '0';
+        if (character >= 'A' && character <= 'F')
+            num = character % 55;
         while (k < i)
         {
             value = value * base;
@@ -160,49 +159,51 @@ void to_base(int number, int base)
     index = strlen(number_c) - 1;
     i = index;
     for (; i >= 0; i--)
-        number_base[i] = number_c[index-i];
-    number_base[index+1] = '\0';
+        number_out[i] = number_c[index-i];
+    number_out[++index] = '\0';
 }
 
 void execute(int argc, char *argv[])
 {
     error(argc, argv);
-    int i, bs=0, base_input, number_input;
+    int i, base_out, base_input, number_input;
     int bases[] = {BIN, OCT, DEC, HEX};
     
     if (argc == 2)
     {
         if (base(argv[1]) == HELP)
-            for (i = 0; i < 10; i++)
+            for (i = 0; i < 9; i++)
                 printf("%s\n", help[i]);
     }
     else if (argc > 3)
     {
         base_input = base(argv[2]);
-        if (bs == DEC) number_input = atoi(argv[1]);
+        if (base_input == DEC) number_input = atoi(argv[1]);
         else number_input = to_decimal(argv[1], base_input);
 
         if (base(argv[3]) == ALL)
         {
+            printf("%s(%d)\n", argv[1], base_input);
             for (i = 0; i < 4; i++)
             {
-                bs = bases[i];
-                if (base_input != bs)
+                base_out = bases[i];
+                if (base_input != base_out)
                 {
-                    to_base(number_input, bs);
-                    printf("%s(%d) --> %s(%d)\n", argv[1], base_input, number_base, bs);
+                    to_base(number_input, base_out);
+                    printf(">> %s(%d)\n", number_out, base_out);
                 }
             }
         }
         else
         {
+            printf("%s(%d)\n", argv[1], base_input);
             for (i = 3; i < 6; i++)
             {
                 if (argv[i] != NULL)
                 {
-                    bs = base(argv[i]);
-                    to_base(number_input, bs);
-                    printf("%s(%d) --> %s(%d)\n", argv[1], base_input, number_base, bs);
+                    base_out = base(argv[i]);
+                    to_base(number_input, base_out);
+                    printf(">> %s(%d)\n", number_out, base_out);
                 }
                 else break;
             }

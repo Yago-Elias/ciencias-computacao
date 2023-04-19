@@ -24,10 +24,10 @@ void Tree_free(Tree *tr) {
 
 void Tree_print(Tree *tr) {
     if (tr) {
-        printf("<%c ");
+        printf("<%c ", tr->value);
         Tree_print(tr->left);
         Tree_print(tr->right);
-        printf(" >");
+        printf(" > ");
     }
     printf("<>");
 }

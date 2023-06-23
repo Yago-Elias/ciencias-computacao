@@ -51,7 +51,7 @@ void List_insert(List *lst, void *value) {
 
         if (lst->length > 0)
             new_node->next_node = lst->first;
-        
+
         lst->first = new_node;
         lst->length++;
     }
@@ -82,7 +82,7 @@ void List_insertSorted(List *lst, void *value, int (*cmp)(void*, void*)) {
                 prev_node->next_node = new_node;
             else
                 lst->first = new_node;
-            
+
             new_node->next_node = node;
         }
 
@@ -103,7 +103,7 @@ void *List_remove(List *lst, void *value, int (*cmp)(void*, void*)) {
                     lst->first = node->next_node;
                 else
                     prev_node->next_node = node->next_node;
-                
+
                 value_node = node->value;
                 free(node);
                 lst->length--;
@@ -121,7 +121,7 @@ void *List_remove(List *lst, void *value, int (*cmp)(void*, void*)) {
 int List_getLength(List *lst) {
     if (lst)
         return lst->length;
-    
+
     return 0;
 }
 
@@ -171,4 +171,3 @@ void List_print(List *lst, void (*print)(void*)) {
         printf("\n");
     }
 }
-

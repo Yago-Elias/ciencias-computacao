@@ -205,11 +205,11 @@ static void reachRAnxious(Graph G, vertex v, vertex t) {
         }
 }
 
-bool GRAPHreachAnxious(Graph G, vertex s, vertex t) {
-    for (vertex v = 0; v < G->V; ++v)
-        visited[v] = 0;
-    reachRAnxious(G, s, t);
-    if (visited[t] == 0) return false;
+// bool GRAPHreachAnxious(Graph G, vertex s, vertex t) {
+//     for (vertex v = 0; v < G->V; ++v)
+//         visited[v] = 0;
+//     reachRAnxious(G, s, t);
+//     if (visited[t] == 0) return false;
 
-    return true;
-}
+//     return true;
+// }

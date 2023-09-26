@@ -107,11 +107,11 @@ int main()
 	GRAPHremoveArc(ghp2, 5, 1);
 	printf("\nArcos removidos\nF: 0 -> 4 | %d\n", GRAPHreach(ghp2, 0, 4));
 
-	Graph ghp3 = GRAPHinit(1);
+	Graph ghp3 = GRAPHinit(6);
 
 	printf("\nNovo grafo\nG: 0 -> 0 | %d\n", GRAPHreach(ghp3, 0, 0));
 
-	printf("H: 2 -> 6 | %d\n", GRAPHreachAnxious(ghp1, 2, 6));
+	printf("H: 2 -> 4 | %d\n", GRAPHreachAnxious(ghp2, 2, 4));
 
 	return 0;
 }

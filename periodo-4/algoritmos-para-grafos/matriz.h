@@ -6,9 +6,9 @@
 #define vertex int
 
 struct graph {
-   int V;
-   int A;
-   int **adj; 
+    int V;
+    int A;
+    int **adj; 
 };
 
 typedef struct graph *Graph;

@@ -1,5 +1,0 @@
-mdc(a, b)
-	se b = 0
-		retorne a
-	senão
-		retorne mdc(b, a % b)

@@ -29,5 +29,7 @@ Graph GRAPHrandTounament( int V);
 void GRAPHdfs( Graph G);
 bool GRAPHreach(Graph G, vertex s, vertex t);
 bool GRAPHreachAnxious(Graph G, vertex s, vertex t);
+void GRAPHbfs(Graph G, vertex s);
+void GRAPHshowNum(Graph g);
 
 #endif

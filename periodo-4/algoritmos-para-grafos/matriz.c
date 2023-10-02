@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include "queue.h"
 #include "matriz.h"
 
 
@@ -209,4 +210,41 @@ bool GRAPHreachAnxious(Graph G, vertex s, vertex t) {
     if (visited[t] == 0) return false;
 
     return true;
+}
+
+static int num[1000];
+void GRAPHbfs(Graph g, vertex s) {
+    int cnt = 0;
+    for (vertex v = 0; v < g->V; ++v)
+        num[v] = -1;
+    QUEUEinit(g->V);
+    num[s] = cnt++;
+    QUEUEput(s);
+    printf("GRAPHbfs (G, %d)\n", s);
+
+    indent = 0;
+    while (!QUEUEempty()) {
+        vertex v = QUEUEget();
+        for (vertex c = 0; c < g->V; c++) {
+            if (!g->adj[v][c])
+                continue;
+            if (num[c] == -1) {
+                num[c] = cnt++;
+                QUEUEput(c);
+                printIndent();
+                QUEUEprint();
+                printf("\n");
+            }
+        }
+        printIndent();
+        indent += 2;
+    }
+    printf("\n");
+    QUEUEfree();
+}
+
+void GRAPHshowNum(Graph g) {
+    printf("NUM  QUEUE\n");
+    for (int i = 0; i < g->V; ++i)
+        printf("%d    %d\n", i, num[i]);
 }

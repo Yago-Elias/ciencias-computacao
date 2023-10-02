@@ -43,6 +43,14 @@ void GRAPHinsertArc( Graph G, vertex v, vertex w) {
    G->A++;
 }
 
+void UGRAPHinsertArc(Graph G, vertex v, vertex w) { 
+   for (link a = G->adj[v]; a != NULL; a = a->next) 
+      if (a->w == w) return;
+   G->adj[v] = NEWnode( w, G->adj[v]);
+   G->adj[w] = NEWnode(v, G->adj[w]);
+   G->A++;
+}
+
 //Exercício para criação desta função
 void GRAPHremoveArc (Graph G, vertex v, vertex w) {
   link p, q = NULL;

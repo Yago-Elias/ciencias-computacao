@@ -28,23 +28,24 @@ struct graph {
 /* Um Graph é um ponteiro para um graph. */
 typedef struct graph *Graph;
 
-Graph GRAPHinit( int V);
-void GRAPHinsertArc( Graph G, vertex v, vertex w); 
+Graph GRAPHinit(int V);
+void GRAPHinsertArc(Graph G, vertex v, vertex w); 
+void UGRAPHinsertArc(Graph G, vertex v, vertex w);
 void GRAPHremoveArc(Graph G, vertex v, vertex w);
 int GRAPHindeg(Graph ghp, vertex v);
 int GRAPHoutdeg(Graph ghp, vertex v);
-void GRAPHshow( Graph G);
-Graph GRAPHrand( int V, int A);
-bool isTopoNumbering( Graph G, int topo[]);
-bool topol( Graph G);
+void GRAPHshow(Graph G);
+Graph GRAPHrand(int V, int A);
+bool isTopoNumbering(Graph G, int topo[]);
+bool topol(Graph G);
 int *UGRAPHdegrees(Graph ghp);
 int GRAPHtypeTree(Graph ghp);
 bool isSink(Graph G, vertex v);
 bool isSource(Graph G, vertex v);
 void listSink(Graph G);
 void listSource(Graph G);
-Graph GRAPHrandTounament( int V);
-void GRAPHdfs( Graph G);
+Graph GRAPHrandTounament(int V);
+void GRAPHdfs(Graph G);
 bool GRAPHreach(Graph G, vertex s, vertex t);
 
 #endif

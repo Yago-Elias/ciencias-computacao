@@ -47,5 +47,6 @@ void listSource(Graph G);
 Graph GRAPHrandTounament(int V);
 void GRAPHdfs(Graph G);
 bool GRAPHreach(Graph G, vertex s, vertex t);
+void DAGspt(Dag G, vertex *vv, vertex s, vertex *pa, int *dist);
 
 #endif

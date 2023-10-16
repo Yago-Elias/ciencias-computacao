@@ -3,9 +3,9 @@
 Graph *gerarLabirinto(int v) {
 	Graph *gph = GRAPHinit(v);
 
-	for (link li = gph->next; li != NULL; li = li->next) {
-		for (link j = 0; j < count; ++j) {
-		}
+	for(int i = 0; i < G->V; i++){
+		if(i + 1 < 0){
+			}
 	}
 
 	return gph;

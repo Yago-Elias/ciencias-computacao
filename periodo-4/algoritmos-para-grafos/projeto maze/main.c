@@ -1,11 +1,6 @@
-#include <stdio.h>
-#include "../matriz-adjacencia/matriz.h"
 #include "labirinto.c"
 
-int main() {
-	int **lab = gerarLabirinto(4, 4);
-
-	printLabirinto(lab, 4, 4);
-
+int main(int argc, char **argv) {
+	run(argc, argv);
 	return 0;
 }

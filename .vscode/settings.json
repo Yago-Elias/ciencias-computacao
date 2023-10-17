@@ -3,5 +3,8 @@
     "workbench.colorTheme": "Default Dark+",
     "workbench.preferredHighContrastColorTheme": "Default Dark+",
     "workbench.sideBar.location": "right",
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "list.h": "c"
+    }
 }

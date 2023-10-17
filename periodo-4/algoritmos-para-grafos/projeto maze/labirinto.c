@@ -14,6 +14,17 @@ Graph gerarLabirinto(int u, int d) {
 	return gph;
 }
 
+void ajuda() {
+	printf(
+		"Uso:\n\t./maze ql qc alg s t\n"
+		"\tql\t\tnúmero de linhas\n"
+		"\tqc\t\tnúmero de colunas\n"
+		"\tdfs\t\talgorítimo de busca em profundidade\n"
+		"\tdfs\t\talgorítimo de busca em largura\n"
+		"\n"
+	);
+}
+
 int erro(int argc, char **argv) {
 	return 1;
 }

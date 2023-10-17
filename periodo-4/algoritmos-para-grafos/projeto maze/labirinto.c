@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "../lista-adjacencia/list.h"
 
-Graph gerarLabirinto(int v) {
+Graph gerarLabirinto(int u, int d) {
 	Graph gph = GRAPHinit(v);
 
 	// for(int i = 0; i < G->V; i++){

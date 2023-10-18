@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include "../lista-adjacencia/list.h"
 
 #define _VERSAO "1.0"
 
 typedef enum Parametro {INVALIDO=1, DFS, BFS, HELP, VERSAO} parametro;
+enum Argumento {QL=1, QC, ALG, S, T};
 
 Graph gerarLabirinto(int u, int d) {
 	Graph gph = GRAPHinit(u);
@@ -53,6 +53,15 @@ parametro argumento(char *arg) {
 	return INVALIDO;
 }
 
+static int digito(char *arg) {
+	for (size_t i = 0; i < strlen(arg); i++)
+		if (arg[i] >= '0' && arg[i] <= '9')
+			continue;
+		else
+			return INVALIDO;
+	return 0;
+}
+
 void erro(int argc, char **argv) {
 	parametro err = 0, opc;
 	opc = argumento(argv[1]);
@@ -67,13 +76,24 @@ void erro(int argc, char **argv) {
 	}
 	else if (argc == 6) {
 		int ql, qc;
-		err = INVALIDO;
-		ql = !isdigit(argv[1]) ? 1 : !isdigit(argv[2]) ? 2 : 0;
-		printf("%d\n", ql);
-		if (ql) printf("Parâmetro '%s' não é um valor inteiro\n", argv[ql]);
+		
+		ql = digito(argv[QL]);
+		qc = digito(argv[QC]);
+		if (ql || qc) {
+			err = INVALIDO;
+			printf("Parâmetro '%s' não é um valor inteiro\n", argv[ql?1:2]);
+		}
+
+		if (strcmp(argv[ALG], "dfs") && strcmp(argv[ALG], "bfs")) {
+			err = INVALIDO;
+			printf("Parâmetro '%s' inválido\n", argv[ALG]);
+		}
 	}
 
-	if (err) exit(err);
+	if (err) {
+		printf("Tente \"./maze --help\" para mais informações\n");
+		exit(err);
+	}
 }
 
 void run(int argc, char **argv) {

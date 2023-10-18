@@ -43,9 +43,6 @@ int erro(int argc, char **argv) {
 void run(int argc, char **argv) {
 	Graph gph = gerarLabirinto(atoi(argv[1]), atoi(argv[2]));
 
-	ajuda();
-	versao();
-
 	if (!strcmp(argv[1], "--h") || !strcmp(argv[1], "--help"))
 		GRAPHdfs(gph);
 	else

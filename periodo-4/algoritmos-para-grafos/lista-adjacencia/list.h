@@ -27,6 +27,7 @@ struct graph {
 
 /* Um Graph é um ponteiro para um graph. */
 typedef struct graph *Graph;
+typedef Graph Dag;
 
 Graph GRAPHinit(int V);
 void GRAPHinsertArc(Graph G, vertex v, vertex w); 

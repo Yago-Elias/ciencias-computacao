@@ -71,7 +71,13 @@ void GRAPHremoveArc (Graph G, vertex v, vertex w) {
 
 int GRAPHindeg(Graph ghp, vertex v) {return 0;}
 
-int GRAPHoutdeg(Graph ghp, vertex v) {return 0;}
+int GRAPHoutdeg(Graph ghp, vertex v) {
+   int degree;
+   for (link a = G->adj[i]; a != NULL; a = a->next) {
+      degree++;
+   }
+   return degree;
+}
 
 void GRAPHshow( Graph G) { 
 	

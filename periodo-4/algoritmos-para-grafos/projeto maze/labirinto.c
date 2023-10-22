@@ -5,8 +5,20 @@
 
 #define _VERSAO "1.0"
 
-typedef enum Parametro {INVALIDO=1, DFS, BFS, HELP, VERSAO} parametro;
-enum Argumento {QL=1, QC, ALG, S, T};
+typedef enum Parametro {
+	INVALIDO=1,
+	DFS,
+	BFS,
+	HELP,
+	VERSAO
+	} parametro;
+enum Argumento {
+	QL=1,
+	QC,
+	ALG,
+	S,
+	T
+	};
 
 Graph gerarLabirinto(int u, int d) {
 	Graph gph = GRAPHinit(u);
@@ -49,6 +61,10 @@ parametro argumento(char *arg) {
 		return DFS;
 	else if (!strcmp(arg, "bfs"))
 		return BFS;
+	else if (!strcmp(arg, "u"))
+		return S;
+	else if (!strcmp(arg, "d"))
+		return T;
 	
 	return INVALIDO;
 }
@@ -68,25 +84,36 @@ void erro(int argc, char **argv) {
 
 	if (argc != 2 && argc != 6) {
 		err = INVALIDO;
-		ajuda();
+		printf("Parâmetros ausentes\n");
 	}
 	else if (argc == 2 && opc == INVALIDO) {
 		err = INVALIDO;
-		printf("Parâmetro '%s' inválido\nTente \"./maze --help\" para mais informações\n", argv[1]);
+		printf("Parâmetro '%s' inválido\n", argv[1]);
 	}
 	else if (argc == 6) {
-		int ql, qc;
+		int ql, qc, s, t;
 		
 		ql = digito(argv[QL]);
 		qc = digito(argv[QC]);
+		s = argumento(argv[S]);
+		t = argumento(argv[5]);
+
 		if (ql || qc) {
 			err = INVALIDO;
 			printf("Parâmetro '%s' não é um valor inteiro\n", argv[ql?1:2]);
 		}
-
-		if (strcmp(argv[ALG], "dfs") && strcmp(argv[ALG], "bfs")) {
+		else if (strcmp(argv[ALG], "dfs") && strcmp(argv[ALG], "bfs")) {
 			err = INVALIDO;
 			printf("Parâmetro '%s' inválido\n", argv[ALG]);
+		}
+		else if ((s != S && s != T) || (t != S && t != T)) {
+			err = INVALIDO;
+			s = s == S || s == T;
+			printf("Parâmetro '%s' inválido\n", s ? argv[T] : argv[S]);
+		}
+		else if (s == t) {
+			err = INVALIDO;
+			printf("Início e fim da busca não podem ser iguiais\n");
 		}
 	}
 

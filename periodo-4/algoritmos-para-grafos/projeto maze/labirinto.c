@@ -84,7 +84,10 @@ void erro(int argc, char **argv) {
 
 	if (argc != 2 && argc != 6) {
 		err = INVALIDO;
-		printf("Parâmetros ausentes\n");
+		if (argc > 6)
+			printf("Parâmetro '%s' inválido\n", argv[6]);
+		else
+			printf("Parâmetros ausentes\n");
 	}
 	else if (argc == 2 && opc == INVALIDO) {
 		err = INVALIDO;
@@ -96,7 +99,7 @@ void erro(int argc, char **argv) {
 		ql = digito(argv[QL]);
 		qc = digito(argv[QC]);
 		s = argumento(argv[S]);
-		t = argumento(argv[5]);
+		t = argumento(argv[T]);
 
 		if (ql || qc) {
 			err = INVALIDO;

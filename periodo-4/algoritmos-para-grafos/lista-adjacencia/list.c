@@ -241,3 +241,50 @@ bool GRAPHreach(Graph G, vertex s, vertex t) {
 
    return true;
 }
+
+/* A função recebe um dag G, uma permutação topológica vv[] dos vértices, e um
+vértice s de G. A função supõe que todos os vértices estão ao alcance de s.
+A função armazena em pa[] o vetor de pais de uma SPT de G com raiz s. As
+distâncias a partir de s são armazenadas no vetor dist[]. O espaço para os
+vetores pa[] e dist[] deve ser alocado pelo usuário. (O código foi inspirado
+no programa 21.6 de Sedgewick.) */
+
+#define Dag Graph
+
+void DAGspt(Dag G, vertex *vv, vertex s, vertex *pa, int *dist) { 
+   const int INFINITY = G->V;
+   for (vertex v = 0; v < G->V; ++v)
+      pa[v] = -1, dist[v] = INFINITY;
+   pa[s] = s, dist[s] = 0;
+
+   for (int j = 0; j < G->V; ++j) {
+      vertex v = vv[j];
+      for (link a = G->adj[v]; a != NULL; a = a->next) {
+         vertex w = a->w; 
+         if (dist[v] + 1 < dist[w]) {
+            dist[w] = dist[v] + 1; // relaxação de v-w
+            pa[w] = v;
+         }
+      }
+   }
+}
+
+static int num[1000];
+void GRAPHbfs( Graph G, vertex s) {
+   int cnt = 0;
+   for (vertex v = 0; v < G->V; ++v)
+      num[v] = -1;
+   QUEUEinit( G->V);
+   num[s] = cnt++;
+   QUEUEput(s);
+
+   while (!QUEUEempty()) {
+      vertex v = QUEUEget();
+      for (link a = G->adj[v]; a != NULL; a = a->next)
+         if (num[a->w] == -1) {
+            num[a->w] = cnt++;
+            QUEUEput(a->w);
+         }
+   }
+   QUEUEfree(); 
+}

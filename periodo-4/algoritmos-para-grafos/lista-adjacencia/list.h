@@ -27,6 +27,7 @@ struct graph {
 
 /* Um Graph é um ponteiro para um graph. */
 typedef struct graph *Graph;
+typedef Graph Dag;
 
 Graph GRAPHinit(int V);
 void GRAPHinsertArc(Graph G, vertex v, vertex w); 
@@ -47,5 +48,7 @@ void listSource(Graph G);
 Graph GRAPHrandTounament(int V);
 void GRAPHdfs(Graph G);
 bool GRAPHreach(Graph G, vertex s, vertex t);
+void DAGspt(Dag G, vertex *vv, vertex s, vertex *pa, int *dist);
+void GRAPHbfs( Graph G, vertex s);
 
 #endif

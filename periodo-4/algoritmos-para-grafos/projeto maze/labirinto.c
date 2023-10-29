@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "list.h"
+#include "lib/list.h"
+
 #define _VERSAO "1.0"
 
 typedef enum Parametro {

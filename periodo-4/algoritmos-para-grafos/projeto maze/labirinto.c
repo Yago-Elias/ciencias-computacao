@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lib/list.h"
+#include "../lista-adjacencia/list.h"
 
 #define _VERSAO "1.0"
 
@@ -22,6 +22,11 @@ enum Argumento {
 
 Graph gerarLabirinto(int u, int d) {
 	Graph gph = GRAPHinit(u);
+
+	// for(int i = 0; i < G->V; i++){
+	// 	if(i + 1 < 0){
+	// 		}
+	// }
 
 	return gph;
 }

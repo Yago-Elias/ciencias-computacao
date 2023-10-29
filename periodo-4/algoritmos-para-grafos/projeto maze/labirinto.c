@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../lista-adjacencia/list.h"
+#include <time.h>
+#include "list.h"
 #define _VERSAO "1.0"
 
 typedef enum Parametro {
@@ -19,34 +20,38 @@ enum Argumento {
 	T
 	};
 
-Graph gerarLabirinto(int u, int d) {
-	Graph gph = GRAPHinit(u);
-
+Graph gerarLabirinto(int l, int c) {
 	Graph gph = GRAPHinit(l*c);
 	int aux = 0;
 
 	for(int i = 0; i < gph->V; i++){
 		if(aux < l-1){
-			UGRAPHinsertArc(gph, i, i+1);
+			GRAPHinsertArc(gph, i, i+1);
+			GRAPHinsertArc(gph, i+1, i);
 			aux++;
 		} else{
 			aux = 0;
 		}
-		if(i+l > gph->V){
-			UGRAPHinsertArc(gph, i, i+1+l);
+		if(i+l < gph->V){
+			GRAPHinsertArc(gph, i, i+l);
+			GRAPHinsertArc(gph, i+l, i);
 		}
 	}
 	return gph;
 }
 void GRAPHremoveParede(Graph gph){
+	srand(time(NULL));
 	int numRemove, whatRemove, aux;
 	for(int i = 0; i < gph->V; i++){
 		aux = 0;
-		numRemove = rand % GRAPHoutdeg(gph, i);
+		if(GRAPHoutdeg(gph, i) == 0){
+			continue;
+		}
+		numRemove = rand() % GRAPHoutdeg(gph, i);
 		for(int j = 0; j < numRemove; j++){
-			whatRemove = rand % GRAPHoutdeg(gph, i);
-			for (link a = gph->adj[v]; a != NULL; a = a->next){
-				if(whatRemove == aux){
+			whatRemove = rand() % GRAPHoutdeg(gph, i);
+			for (link a = gph->adj[i]; a != NULL; a = a->next){
+				if(whatRemove == aux && GRAPHoutdeg(gph, a->w) > 1){
 					GRAPHremoveArc(gph, i, a->w);
 					GRAPHremoveArc(gph, a->w, i);
 				}

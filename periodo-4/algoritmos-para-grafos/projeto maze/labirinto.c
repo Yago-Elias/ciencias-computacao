@@ -159,4 +159,27 @@ void erro(int argc, char **argv) {
 
 void run(int argc, char **argv) {
 	erro(argc, argv);
+	Graph G = gerarLabirinto(atoi(argv[QL]), atoi(argv[QC]));
+	GRAPHremoveParede(G);
+	GRAPHshow(G);
+	if(argumento(argv[ALG]) == DFS){
+		GRAPHdfs(G);
+		if(argumento(argv[S]) == S){
+			if(GRAPHreach(G, 1, 8)){
+				GRAPHpath(G, 1, 8);
+			} else{
+				printf("Não é acessivel\n");
+			}
+		}
+		if(argumento(argv[S]) == T){
+			if(GRAPHreach(G, 8, 2)){
+				GRAPHpath(G, 8, 2);
+			} else{
+				printf("Não é acessivel\n");
+			}
+		}
+	}
+	if(argumento(argv[ALG]) == BFS){
+		
+	}
 }

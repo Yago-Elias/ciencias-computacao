@@ -189,20 +189,24 @@ void listSink(Graph G){
 
 static int cnt;
 static int indent = 0;
+static int cntt;
+int post[1000];
 int pre[1000];
+vertex pa[1000];
+
 void GRAPHdfs( Graph G) {
-  cnt = 0;
-
-  for (vertex v = 0; v < G->V; ++v)
-    pre[v] = -1;
-
-  for (vertex v = 0; v < G->V; ++v) {
-    if (pre[v] == -1) {
-      printf("%d dfsR(G, %d)\n", v, v);
-      dfsR( G, v); // começa nova etapa
-      printf("%d\n", v);
-    }
-  }
+   cnt = cntt = 0;
+   for (vertex v = 2; v < G->V; ++v)
+      pre[v] = -1;
+   
+   for (vertex v = 0; v < G->V; ++v) {
+      if (pre[v] == -1) {
+         //printf("%d dfsR(G, %d)\n", v, v);
+         pa[v] = v;
+         dfsR( G, v); // começa nova etapa
+         //printf("%d\n", v);
+      }
+   }
 }
 
 static void dfsR( Graph G, vertex v) {
@@ -210,20 +214,44 @@ static void dfsR( Graph G, vertex v) {
   for (link a = G->adj[v]; a != NULL; a = a->next) {
     vertex w = a->w;
     if (pre[w] == -1){
-      printIndent();
-      printf("%d-%d dfsR(G, %d)\n", v, w, w);
-      indent += 2;
+      //printIndent();
+      //printf("%d-%d dfsR(G, %d)\n", v, w, w);
+      //indent += 2;
+      pa[a->w] = v;
       dfsR( G, w);
     }
     printIndent();
     printf("%d\n", w);
     indent -= 2;
   }
+  post[v] = cntt++;
 }
 
 static void printIndent() {
   for (int i = 0; i < indent; i++)
     printf("-");
+}
+
+int atu_v = -1;
+static void reachRP(Graph gph, int v, int t) {
+   visited[v] = 1;
+   if(atu_v != t){
+      atu_v = v;
+      printf("%d", atu_v);
+      if(atu_v != t){
+         printf(" -> ");
+      }
+   }
+   for (link a = gph->adj[v]; a != NULL; a = a->next)
+      if (visited[a->w] == 0)
+         reachRP(gph, a->w, t);
+}
+
+void GRAPHpath(Graph gph, int s, int t){
+   for (vertex v = 0; v < gph->V; ++v)
+      visited[v] = 0;
+   reachRP(gph, s, t);
+   printf("\n");
 }
 
 static void reachR(Graph G, vertex v) {
@@ -269,7 +297,7 @@ void DAGspt(Dag G, vertex *vv, vertex s, vertex *pa, int *dist) {
    }
 }
 
-static int num[1000];
+int num[1000];
 void GRAPHbfs( Graph G, vertex s) {
    int cnt = 0;
    for (vertex v = 0; v < G->V; ++v)

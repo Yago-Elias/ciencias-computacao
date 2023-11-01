@@ -243,28 +243,6 @@ void GRAPHpath(Graph gph, vertex s, vertex t) {
 		printf("Não existe caminho de %d até %d\n", s, t);
 }
 
-int atu_v = -1;
-static void reachRP(Graph gph, int v, int t) {
-   visited[v] = 1;
-   if(atu_v != t){
-      atu_v = v;
-      printf("%d", atu_v);
-      if(atu_v != t){
-         printf(" -> ");
-      }
-   }
-   for (link a = gph->adj[v]; a != NULL; a = a->next)
-      if (visited[a->w] == 0)
-         reachRP(gph, a->w, t);
-}
-
-void GRAPHpath(Graph gph, int s, int t){
-   for (vertex v = 0; v < gph->V; ++v)
-      visited[v] = 0;
-   reachRP(gph, s, t);
-   printf("\n");
-}
-
 static void reachR(Graph G, vertex v) {
    visited[v] = 1;
    for (link a = G->adj[v]; a != NULL; a = a->next)

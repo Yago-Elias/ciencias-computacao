@@ -159,15 +159,20 @@ void erro(int argc, char **argv) {
 
 void run(int argc, char **argv) {
 	erro(argc, argv);
+	Graph G = gerarLabirinto(atoi(argv[QL]), atoi(argv[QC]));
+	GRAPHremoveParede(G);
 
-	Graph gph = gerarLabirinto(atoi(argv[QL]), atoi(argv[QC]));
-	GRAPHshow(gph);
-
-	printf("\n");
-
-	GRAPHremoveParede(gph);
-	GRAPHshow(gph);
-
-	printf("[ %c ]\n", *argv[S]);
-	GRAPHpath(gph, 5, 0, *argv[S]);
+	if(argumento(argv[ALG]) == DFS) {
+		if(argumento(argv[S]) == S) {
+			if(GRAPHreach(G, 1, 8))
+				GRAPHpath(G, 1, 8);
+		}
+		else if(argumento(argv[S]) == T) {
+			if(GRAPHreach(G, 8, 2))
+				GRAPHpath(G, 8, 2);
+		}
+	}
+	else if(argumento(argv[ALG]) == BFS) {
+		printf("bfs\n");
+	}
 }

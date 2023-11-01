@@ -214,15 +214,16 @@ static void dfsR( Graph G, vertex v) {
 }
 
 static int path[10000];
-void GRAPHpath(Graph gph, vertex s, vertex t, char dir) {
+void GRAPHpath(Graph gph, vertex s, vertex t) {
 	GRAPHdfs(gph);
-	vertex v = s, aux;
+	vertex v = s, aux = -1;
 	cnt = 0;
 
 	if (s < t) {
 		aux = s;
 		v = s = t;
 		t = aux;
+
 	}
 
 	path[cnt++] = s;
@@ -231,17 +232,15 @@ void GRAPHpath(Graph gph, vertex s, vertex t, char dir) {
 	}
 	if (t == pa[v]) {
 		path[cnt++] = pa[v];
-		if (dir == 'd')
+		if (aux == -1)
 			for (int i = 0; i < cnt; i++)
 				printf("%d%s", path[i], i==cnt-1?"\n":" -> ");
 		else
 			for (int  i = --cnt; i >= 0; i--)
 				printf("%d%s", path[i], i==0?"\n":" -> ");
 	}
-	else {
-		printf("Não existe caminho de ");
-		dir == 'u' ? printf("%d e %d\n", t, s) : printf("%d e %d\n", s, t);
-	}
+	else
+		printf("Não existe caminho de %d até %d\n", s, t);
 }
 
 static void reachR(Graph G, vertex v) {
@@ -287,7 +286,7 @@ void DAGspt(Dag G, vertex *vv, vertex s, vertex *pa, int *dist) {
    }
 }
 
-static int num[1000];
+int num[1000];
 void GRAPHbfs( Graph G, vertex s) {
    int cnt = 0;
    for (vertex v = 0; v < G->V; ++v)

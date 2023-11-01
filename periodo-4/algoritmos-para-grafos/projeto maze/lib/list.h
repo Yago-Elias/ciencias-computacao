@@ -47,6 +47,7 @@ void listSink(Graph G);
 void listSource(Graph G);
 Graph GRAPHrandTounament(int V);
 void GRAPHdfs(Graph G);
+void GRAPHpath(Graph gph, int s, int t);
 bool GRAPHreach(Graph G, vertex s, vertex t);
 void DAGspt(Dag G, vertex *vv, vertex s, vertex *pa, int *dist);
 void GRAPHbfs( Graph G, vertex s);

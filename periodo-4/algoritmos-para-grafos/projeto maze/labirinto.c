@@ -159,4 +159,15 @@ void erro(int argc, char **argv) {
 
 void run(int argc, char **argv) {
 	erro(argc, argv);
+
+	Graph gph = gerarLabirinto(atoi(argv[QL]), atoi(argv[QC]));
+	GRAPHshow(gph);
+
+	printf("\n");
+
+	GRAPHremoveParede(gph);
+	GRAPHshow(gph);
+
+	printf("[ %c ]\n", *argv[S]);
+	GRAPHpath(gph, 5, 0, *argv[S]);
 }

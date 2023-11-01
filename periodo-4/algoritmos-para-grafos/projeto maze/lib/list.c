@@ -186,44 +186,62 @@ void listSink(Graph G){
 	}
 }
 
-
-static int cnt;
-static int indent = 0;
-int pre[1000];
+static int cnt, pre[1000];
+static vertex pa[1000];
 void GRAPHdfs( Graph G) {
-  cnt = 0;
+	cnt = 0;
 
-  for (vertex v = 0; v < G->V; ++v)
-    pre[v] = -1;
+	for (vertex v = 0; v < G->V; ++v)
+	pre[v] = -1;
 
-  for (vertex v = 0; v < G->V; ++v) {
-    if (pre[v] == -1) {
-      printf("%d dfsR(G, %d)\n", v, v);
-      dfsR( G, v); // começa nova etapa
-      printf("%d\n", v);
-    }
-  }
+	for (vertex v = 0; v < G->V; ++v) {
+		if (pre[v] == -1) {
+			pa[v] = v;
+			dfsR( G, v); // começa nova etapa
+		}
+	}
 }
 
 static void dfsR( Graph G, vertex v) {
-  pre[v] = cnt++;
-  for (link a = G->adj[v]; a != NULL; a = a->next) {
-    vertex w = a->w;
-    if (pre[w] == -1){
-      printIndent();
-      printf("%d-%d dfsR(G, %d)\n", v, w, w);
-      indent += 2;
-      dfsR( G, w);
-    }
-    printIndent();
-    printf("%d\n", w);
-    indent -= 2;
-  }
+	pre[v] = cnt++;
+	for (link a = G->adj[v]; a != NULL; a = a->next) {
+		vertex w = a->w;
+		if (pre[w] == -1) {
+			pa[a->w] = v;
+			dfsR( G, w);
+		}
+	}
 }
 
-static void printIndent() {
-  for (int i = 0; i < indent; i++)
-    printf("-");
+static int path[10000];
+void GRAPHpath(Graph gph, vertex s, vertex t, char dir) {
+	GRAPHdfs(gph);
+	vertex v = s, aux;
+	cnt = 0;
+
+	if (s < t) {
+		aux = s;
+		v = s = t;
+		t = aux;
+	}
+
+	path[cnt++] = s;
+	while (pa[v] != t && pa[v] != v) {
+		path[cnt++] = v = pa[v];
+	}
+	if (t == pa[v]) {
+		path[cnt++] = pa[v];
+		if (dir == 'd')
+			for (int i = 0; i < cnt; i++)
+				printf("%d%s", path[i], i==cnt-1?"\n":" -> ");
+		else
+			for (int  i = --cnt; i >= 0; i--)
+				printf("%d%s", path[i], i==0?"\n":" -> ");
+	}
+	else {
+		printf("Não existe caminho de ");
+		dir == 'u' ? printf("%d e %d\n", t, s) : printf("%d e %d\n", s, t);
+	}
 }
 
 static void reachR(Graph G, vertex v) {

@@ -56,3 +56,4 @@ teste/
 *.sh
 *.in
 *.sol
+*.out

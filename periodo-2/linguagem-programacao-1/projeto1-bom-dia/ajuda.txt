@@ -1,0 +1,12 @@
+Uso: ./bomdia [opção]
+Opção:
+    -1, --pt            mostra bom dia no idioma português
+    -2, --en            mostra bom dia no idioma inglês
+    -3, --es            mostra bom dia no idioma espanhol
+    -4, --fr            mostra bom dia no idioma fracês
+    -5, --it            mostra bom dia no idioma italiano
+    -6, --ru            mostra bom dia no idioma russo
+    -7, --ko            mostra bom dia no idioma coreano
+    -8, --ja            mostra bom dia no idioma japonês
+    -h, --help          mostra estas opções
+    -v, --version       mostra a versão do software
